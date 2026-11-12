@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1f3a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JK Calc">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<title>JK Compressores | Calculadora Técnica</title>
+<style>
+:root{
+  --bg:#07111f; --panel:#0e1f36; --panel2:#132a49; --line:#24406a;
+  --blue:#1f6fe0; --blue2:#3d8bff; --navy:#0b1f3a; --text:#f4f7fb; --muted:#a9b8cc;
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);background:var(--bg)
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg)}
+body{margin:0 auto;max-width:780px;padding:calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 16px)}
+header{display:flex;align-items:center;gap:14px;margin:6px 0 18px}
+.brand{background:#fff;border-radius:50%;padding:0;flex-shrink:0;display:flex;overflow:hidden}
+.brand img{height:72px;width:72px;display:block}
+.title{font-size:15px;font-weight:800;letter-spacing:.5px}
+.muted{color:var(--muted);font-size:12px;letter-spacing:.8px;margin-top:2px}
+h1{font-size:19px;margin:0 0 4px}
+section{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin:14px 0}
+label{display:block;margin:14px 0 6px;color:#dbe5f2;font-size:14px}
+input,select{width:100%;min-height:50px;padding:12px 13px;background:#091729;color:#fff;border:1px solid #2d4f80;border-radius:12px;font-size:17px;-webkit-appearance:none;appearance:none}
+select{background-image:linear-gradient(45deg,transparent 50%,#9fb6d6 50%),linear-gradient(135deg,#9fb6d6 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px;background-repeat:no-repeat;padding-right:36px}
+input:focus,select:focus{outline:2px solid var(--blue2);outline-offset:1px}
+nav{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px}
+nav button{min-height:52px;border:1px solid var(--line);background:var(--panel2);color:#e8eef7;border-radius:12px;padding:10px;font-size:15px;font-weight:700;cursor:pointer}
+nav button.active{background:var(--blue);border-color:var(--blue2);color:#fff}
+.result{background:linear-gradient(180deg,#123a73,#0f2f5c);border:1px solid #2a5ca6;padding:15px;border-radius:12px;margin-top:18px;font-size:13px;color:#cfe0f7}
+.result strong{display:block;font-size:26px;margin-top:5px;color:#fff;overflow-wrap:anywhere}
+.note{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:0}
+footer{text-align:center;margin:22px 0 8px;color:#7f93ad;font-size:11px;letter-spacing:.6px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:420px){.grid{grid-template-columns:1fr}}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><img src="logo-jk.png" alt="JK Compressores"></div>
+  <div><div class="title">CALCULADORA TÉCNICA</div><div class="muted">JK COMPRESSORES</div></div>
+</header>
+
+<nav id="tabs">
+  <button class="active" data-tab="convert">Conversões</button>
+  <button data-tab="current">Corrente trifásica</button>
+  <button data-tab="power">Potência elétrica</button>
+  <button data-tab="energy">Energia</button>
+  <button data-tab="air">Vazão estimada</button>
+</nav>
+
+<section id="convert">
+  <h1>Conversor de unidades</h1>
+  <label for="quantity">Grandeza</label>
+  <select id="quantity">
+    <option value="flow">Vazão</option>
+    <option value="pressure">Pressão</option>
+    <option value="powerunit">Potência</option>
+    <option value="temperature">Temperatura</option>
+    <option value="volume">Volume</option>
+  </select>
+  <div class="grid">
+    <div><label for="from">De</label><select id="from"></select></div>
+    <div><label for="to">Para</label><select id="to"></select></div>
+  </div>
+  <label for="convval">Valor</label>
+  <input id="convval" type="number" inputmode="decimal" step="any" value="2.21">
+  <div class="result">Resultado<strong id="convout">—</strong></div>
+  <p class="note">PCM = pés cúbicos por minuto (CFM). Converter unidades não altera a condição de referência da vazão (por exemplo, FAD). Pressões convertidas mantêm a mesma referência (manométrica ou absoluta) do valor digitado.</p>
+</section>
+
+<section id="current" hidden>
+  <h1>Corrente nominal trifásica estimada</h1>
+  <label for="cv">Potência mecânica do motor (cv)</label>
+  <input id="cv" type="number" inputmode="decimal" step="any" value="30">
+  <label for="voltage">Tensão entre fases (V)</label>
+  <input id="voltage" type="number" inputmode="decimal" step="any" value="380">
+  <div class="grid">
+    <div><label for="eta">Rendimento η (0 a 1)</label><input id="eta" type="number" inputmode="decimal" step="any" value="0.92"></div>
+    <div><label for="pf">Fator de potência cos φ (0 a 1)</label><input id="pf" type="number" inputmode="decimal" step="any" value="0.85"></div>
+  </div>
+  <div class="result">Corrente calculada<strong id="currentout">—</strong></div>
+  <p class="note">I = (cv × 735,49875) / (√3 × V × η × cos φ). Estimativa para motor em regime nominal; confirme corrente e fator de serviço na placa. Não dimensiona automaticamente proteção ou cabos.</p>
+</section>
+
+<section id="power" hidden>
+  <h1>Potência elétrica trifásica</h1>
+  <label for="pv">Tensão entre fases (V)</label>
+  <input id="pv" type="number" inputmode="decimal" step="any" value="380">
+  <label for="pa">Corrente de linha (A)</label>
+  <input id="pa" type="number" inputmode="decimal" step="any" value="40">
+  <label for="ppf">Fator de potência cos φ</label>
+  <input id="ppf" type="number" inputmode="decimal" step="any" value="0.85">
+  <div class="result">Potência elétrica ativa<strong id="powerout">—</strong></div>
+  <p class="note">P (kW) = √3 × V × I × cos φ / 1000. É potência elétrica de entrada, não potência mecânica no eixo.</p>
+</section>
+
+<section id="energy" hidden>
+  <h1>Consumo de energia</h1>
+  <label for="ek">Potência elétrica média consumida (kW)</label>
+  <input id="ek" type="number" inputmode="decimal" step="any" value="15">
+  <label for="eh">Horas de operação</label>
+  <input id="eh" type="number" inputmode="decimal" step="any" value="8">
+  <label for="er">Tarifa (R$/kWh)</label>
+  <input id="er" type="number" inputmode="decimal" step="any" value="0.9">
+  <div class="result">Energia e custo estimados<strong id="energyout">—</strong></div>
+  <p class="note">Considere a potência média real, especialmente em compressores carga/alívio ou VSD. Não inclui demanda contratada, tributos específicos ou outras parcelas tarifárias.</p>
+</section>
+
+<section id="air" hidden>
+  <h1>Vazão por enchimento de reservatório</h1>
+  <label for="liters">Volume do reservatório (litros)</label>
+  <input id="liters" type="number" inputmode="decimal" step="any" value="500">
+  <div class="grid">
+    <div><label for="pstart">Pressão inicial (bar manométrico)</label><input id="pstart" type="number" inputmode="decimal" step="any" value="6"></div>
+    <div><label for="pend">Pressão final (bar manométrico)</label><input id="pend" type="number" inputmode="decimal" step="any" value="8"></div>
+  </div>
+  <label for="seconds">Tempo de enchimento (segundos)</label>
+  <input id="seconds" type="number" inputmode="decimal" step="any" value="30">
+  <div class="result">Vazão livre aproximada<strong id="airout">—</strong></div>
+  <p class="note">Q ≈ V × Δp / (p_atm × t), com V em m³, t em minutos e p_atm ≈ 1,01325 bar. Estimativa isotérmica, sem consumo, vazamentos ou variações de temperatura; não substitui medição de FAD conforme norma.</p>
+</section>
+
+<footer>JK COMPRESSORES · FERRAMENTA DE APOIO TÉCNICO · V1.2</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+const val=id=>Number($(id).value);
+const fmt=(x,d=2)=>Number.isFinite(x)?x.toLocaleString('pt-BR',{maximumFractionDigits:d}):'—';
+// Fatores: valor da unidade expresso na unidade-base do grupo
+const groups={
+  flow:{'m³/min':1,'PCM (ft³/min)':1/35.3146667215,'L/min':0.001,'m³/h':1/60},
+  pressure:{'bar':1,'PSI':1/14.5037738,'kPa':0.01,'MPa':10},
+  powerunit:{'kW':1,'cv':0.73549875,'hp':0.745699872},
+  volume:{'m³':1,'litros':0.001,'ft³':0.028316846592},
+  temperature:{'°C':1,'°F':1,'K':1}
+};
+function temp(x,a,b){
+  const c=a==='°C'?x:a==='°F'?(x-32)*5/9:x-273.15;
+  return b==='°C'?c:b==='°F'?c*9/5+32:c+273.15;
+}
+function updateUnits(){
+  const opts=Object.keys(groups[$('quantity').value]);
+  const html=opts.map(x=>`<option>${x}</option>`).join('');
+  $('from').innerHTML=html; $('to').innerHTML=html; $('to').selectedIndex=1;
+  calculate();
+}
+function calculate(){
+  const q=$('quantity').value,a=$('from').value,b=$('to').value,x=val('convval');
+  const y=q==='temperature'?temp(x,a,b):x*groups[q][a]/groups[q][b];
+  $('convout').textContent=$('convval').value.trim()?fmt(y,4)+' '+b:'—';
+
+  const cv=val('cv'),v=val('voltage'),eta=val('eta'),pf=val('pf');
+  $('currentout').textContent=cv>=0&&v>0&&eta>0&&eta<=1&&pf>0&&pf<=1
+    ?fmt(cv*735.49875/(Math.sqrt(3)*v*eta*pf))+' A':'Verifique os valores';
+
+  const pp=val('ppf');
+  $('powerout').textContent=val('pv')>0&&val('pa')>=0&&pp>0&&pp<=1
+    ?fmt(Math.sqrt(3)*val('pv')*val('pa')*pp/1000)+' kW':'Verifique os valores';
+
+  const kwh=val('ek')*val('eh');
+  $('energyout').textContent=val('ek')>=0&&val('eh')>=0&&val('er')>=0
+    ?fmt(kwh)+' kWh · R$ '+fmt(kwh*val('er')):'Verifique os valores';
+
+  const flow=val('liters')/1000*(val('pend')-val('pstart'))/1.01325/(val('seconds')/60);
+  $('airout').textContent=val('liters')>0&&val('seconds')>0&&val('pstart')>=0&&val('pend')>val('pstart')
+    ?fmt(flow,3)+' m³/min · '+fmt(flow*35.3146667215)+' PCM':'Verifique os valores';
+}
+document.querySelectorAll('input,select').forEach(el=>{
+  el.addEventListener('input',el.id==='quantity'?updateUnits:calculate);
+  el.addEventListener('change',el.id==='quantity'?updateUnits:calculate);
+});
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('active',x===b));
+  ['convert','current','power','energy','air'].forEach(id=>$(id).hidden=id!==b.dataset.tab);
+});
+updateUnits();
+if('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+</script>
+</body>
+</html>
